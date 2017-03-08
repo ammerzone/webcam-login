@@ -25,13 +25,13 @@ class FaceRecognation{
 	* Key for the Microsoft Face API
 	* @const 	API_PRIMARY_KEY
 	*/
-	const API_PRIMARY_KEY = '5421fccda0d746179c22a71882c5e2de';
+	const API_PRIMARY_KEY = '{Microsoft API Key}';
 	
 	/**
 	* Name of the Microsoft Face API person group
 	* @const 	API_PERSON_GROUP
 	*/
-	const API_PERSON_GROUP = 'webcam-login';
+	const API_PERSON_GROUP = '{Group name}';
 	
 	/**
 	* Directory Path where face-images will be saved

@@ -9,6 +9,38 @@
 
 class DatabaseConnection{
 	/**
+	* Name of the Database
+	* 
+	* @var 		string
+	* @access 	private
+	*/
+	$login_dbname = 'webcamlogin';
+	
+	/**
+	* Name of the host
+	* 
+	* @var 		string
+	* @access 	private
+	*/
+	$login_host = 'localhost';
+	
+	/**
+	* Name of the database user
+	* 
+	* @var 		string
+	* @access 	private
+	*/
+	$login_user = 'root';
+	
+	/**
+	* Passwort of the database user
+	* 
+	* @var 		string
+	* @access 	private
+	*/
+	$login_password = '';
+	
+	/**
 	* @var 		object
 	* @access 	private
 	*/
@@ -94,18 +126,13 @@ class DatabaseConnection{
 	* @see 		connect()
 	*/
     private function connect(){
-		if(file_exists("ini/DatabaseSettings.ini"))
-			$this->settings = parse_ini_file("ini/DatabaseSettings.ini");
-		elseif(file_exists("../ini/DatabaseSettings.ini"))
-			$this->settings = parse_ini_file("../ini/DatabaseSettings.ini");
-			
         $dsn = "mysql:";
-		$dsn .= "dbname=".$this->settings["dbname"].";";
-		$dsn .= "host=".$this->settings["host"].";";
+		$dsn .= "dbname=" . $this->login_dbname;
+		$dsn .= "host=" . $this->login_host;
 		
 		/* Try to make connection to database */
         try{
-            $this->pdo = new PDO($dsn, $this->settings["user"], $this->settings["password"], array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+            $this->pdo = new PDO($dsn, $this->login_user, $this->login_password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             $this->connected = true;

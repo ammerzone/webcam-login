@@ -1,0 +1,137 @@
+body{
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	background-color: #FEFEFE;
+}
+#loginField, 
+#registerField{
+	width: 50%;
+	min-height: 50vh;
+	margin-left: 25%;
+	border: 1px solid;
+	border-radius: 4px;
+	background-color: #F0F0F0;
+}
+#loginField>div, 
+#registerField>div{
+	margin-left: 15px;
+}
+#lgnUsername{
+	width: 50%;
+	float: left;
+	margin-left: 15px;
+}
+.form-control{
+    display: block;
+    padding: 8px 12px;
+    font-size: 16px;
+    line-height: 1.25;
+    color: #464A4C;
+    background-color: #FFF;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: 4px;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+#lgnBtn{
+	float: right;
+	margin-right: 15px;
+}
+.loader{
+	width: 35px;
+	height: 35px;
+}
+.btn{
+	display: inline-block;
+	padding: 8px 12px;
+	margin-bottom: 0;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.25;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	user-select: none;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	text-decoration: none;
+}
+.btn-login{
+	color: #222;
+	background-color: #82DD27;
+	border-color: #F0F0F0;
+	font-weight: 600;
+    transition: background-color ease-in-out .5s,color ease-in-out .5s;
+}
+.btn-login:hover{
+	color: #F0F0F0;
+	background-color: #589718;
+}
+.btn-backward{
+	color: #222;
+	background-color: #F32D2A;
+	border-color: #F0F0F0;
+	font-weight: 600;
+    transition: background-color ease-in-out .5s,color ease-in-out .5s;
+}
+.btn-backward:hover{
+	color: #F0F0F0;
+	background-color: #CE0F0B;
+}
+.btn-register{
+	color: #222;
+	background-color: #4A9DC1;
+	border-color: #F0F0F0;
+	font-weight: 600;
+    transition: background-color ease-in-out .5s,color ease-in-out .5s;
+}
+.btn-register:hover{
+	color: #F0F0F0;
+	background-color: #327795;
+}
+#registerField table{
+	margin-left: 15px;
+}
+#register{
+	margin-left: 15px;
+	margin-bottom: 8px;
+}
+
+@media (min-width: 1280px){
+	#livecam{
+		width: 640px !important;
+		height: 480px !important;
+		margin-top: 8px;
+	}
+}
+
+@media (max-width: 1279px){
+	#livecam{
+		width: 320px !important;
+		height: 240px !important;
+		margin-top: 8px;
+	}
+}
+@media (max-width: 768px){
+	#loginField, 
+	#registerField{
+		width: 100%;
+		min-height: 100vw;
+		margin-left: 0%;
+		margin-top: 8px;
+	}
+	#livecam{
+		width: 640px !important;
+		height: 480px !important;
+		margin-top: 8px;
+	}
+}
+@media (max-width: 639px){
+	#livecam{
+		width: 320px !important;
+		height: 240px !important;
+		margin-top: 8px;
+	}
+}

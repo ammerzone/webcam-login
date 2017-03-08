@@ -14,7 +14,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	$login_dbname = '{database name}';
+	private $login_dbname = '{database name}';
 	
 	/**
 	* Name of the host
@@ -22,7 +22,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	$login_host = 'localhost';
+	private $login_host = 'localhost';
 	
 	/**
 	* Name of the database user
@@ -30,7 +30,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	$login_user = '{database user name}';
+	private $login_user = '{database user name}';
 	
 	/**
 	* Passwort of the database user
@@ -38,7 +38,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	$login_password = '{database user password}';
+	private $login_password = '{database user password}';
 	
 	/**
 	* @var 		object

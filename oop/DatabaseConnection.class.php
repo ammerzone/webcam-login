@@ -14,7 +14,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	$login_dbname = 'webcamlogin';
+	$login_dbname = '{database name}';
 	
 	/**
 	* Name of the host
@@ -30,7 +30,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	$login_user = 'root';
+	$login_user = '{database user name}';
 	
 	/**
 	* Passwort of the database user
@@ -38,7 +38,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	$login_password = '';
+	$login_password = '{database user password}';
 	
 	/**
 	* @var 		object

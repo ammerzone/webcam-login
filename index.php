@@ -27,7 +27,7 @@ if(empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] !== "on"){
 <body>
 	<?php
 		/* Check if logged in */
-		if(isset($_SESSION[''])){
+		if(isset($_SESSION['webcam_login_session'])){
 			/* Set content path to 'intern' */
 			define('CONTENT_PATH', 'content/intern/');
 			
@@ -50,11 +50,15 @@ if(empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] !== "on"){
 				case 'login' : 
 					if(file_exists(CONTENT_PATH . $_GET['s'] . '.inc.php')){
 						require_once(CONTENT_PATH . 'login.inc.php');
+					}else{
+						require_once(CONTENT_PATH . DEFAULT_FILE . '.inc.php');
 					}
 					break;
 				case 'register' : 
 					if(file_exists(CONTENT_PATH . $_GET['s'] . '.inc.php')){
 						require_once(CONTENT_PATH . 'register.inc.php');
+					}else{
+						require_once(CONTENT_PATH . DEFAULT_FILE . '.inc.php');
 					}
 					break;
 				default: 

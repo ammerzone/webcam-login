@@ -20,15 +20,10 @@ function login(){
 				username : document.getElementById('lgnUsername').value
 			}, 
 			beforeSend : function(){
-				document.getElementById('loginResponse').innerHTML = '<center><img class="loader" src="media/img/loader.gif"></center>';
+				document.getElementById('loginResponse').innerHTML = '<center>Überprüfe Login:<br><img class="loader" src="media/img/loader.gif"></center>';
 			}, 
 			success: function(data){
 				if(data.val === true){
-					document.getElementById('loginResponse').style.color = '#3c763d';
-					document.getElementById('loginResponse').style.backgroundColor = '#dff0d8';
-					
-					document.getElementById('loginResponse').innerHTML = '<b>Erfolg:</b> ' + data.responseText + '<br><br><center><button class="btn" onclick="javascript:void(closeLoginResponse());">Schließen</button></center>';
-					
 					window.location.reload();
 				}else{
 					document.getElementById('loginResponse').style.color = '#a94442';
@@ -142,7 +137,7 @@ function register(){
 				mail : document.getElementById('regMail').value
 			}, 
 			beforeSend : function(){
-				document.getElementById('registerResponse').innerHTML = '<center><img class="loader" src="media/img/loader.gif"></center>';
+				document.getElementById('registerResponse').innerHTML = '<center>Registriere neuen Account:<br><img class="loader" src="media/img/loader.gif"></center>';
 			}, 
 			success: function(data){
 				if(data.val === true){
@@ -197,21 +192,16 @@ function logout(){
 		url: 'ajax/logout.php',
 		dataType: 'json',
 		beforeSend : function(){
-			document.getElementById('logoutResponse').innerHTML = '<center><img class="loader" src="media/img/loader.gif"></center>';
+			document.getElementById('logoutResponse').innerHTML = '<center>Melde Account ab:<br><img class="loader" src="media/img/loader.gif"></center>';
 		}, 
 		success: function(data){
-			if(data.val === true){
-				document.getElementById('logoutResponse').style.color = '#a94442';
-				document.getElementById('logoutResponse').style.backgroundColor = '#f2dede';
-				
+			if(data === true){
 				window.location.reload();
-				
-				document.getElementById('logoutResponse').innerHTML = '<b>Erfolg:<b> ' + data.responseText + '<br><br><center><button class="btn" onclick="javascript:void(closeLogoutResponse());">Schließen</button></center>';
 			}else{
 				document.getElementById('logoutResponse').style.color = '#a94442';
 				document.getElementById('logoutResponse').style.backgroundColor = '#f2dede';
 				
-				document.getElementById('logoutResponse').innerHTML = '<b>Fehler:</b> ' + data.responseText + '<br><br><center><button class="btn" onclick="javascript:void(closeLogoutResponse());">Schließen</button></center>';
+				document.getElementById('logoutResponse').innerHTML = '<b>Fehler:</b> Es gab einen Fehler beim Versuch sich auszuloggen, bitte versuche es erneut.<br><br><center><button class="btn" onclick="javascript:void(closeLogoutResponse());">Schließen</button></center>';
 			}
 		}, 
 		error: function(data){

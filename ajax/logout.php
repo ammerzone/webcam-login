@@ -1,7 +1,10 @@
 <?php
 require_once('autoload.php');
 
-$reg = new FaceRecognation('');
+$logout = new FaceRecognation(NULL);
 
-$res = $reg->logout();
+$logout->logout();
+
+echo json_encode(true);
+die();
 ?>

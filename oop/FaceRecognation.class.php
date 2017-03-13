@@ -4,7 +4,8 @@
 * 
 * ____________________________________________________________________________________
 * DatabaseConnection.class.php must be included
-* constant BASE_URL must me defined at index.php
+* constant BASE_URL must me defined in index.php
+* session must be started with session_start();
 * ____________________________________________________________________________________
 * 
 * @param 	string 	$user
@@ -38,12 +39,6 @@ class FaceRecognation{
 	* @const 	IMG_PATH_PERSON
 	*/
 	const IMG_PATH_PERSON = 'media/user/';
-	
-	/**
-	* Name of the login session cookie
-	* @const 	LOGIN_SESSION_NAME
-	*/
-	const LOGIN_SESSION_NAME = 'webcam';
 	
 	/**
 	* @var 		object
@@ -841,7 +836,7 @@ class FaceRecognation{
 	* 
 	* ______________________________________________________________
 	* Function calls for a login:
-	*   checkUser(); setBase64Img();
+	*   databaseGetUser('name'); setBase64Img();
 	*   if: uploadImage();
 	*     if: detectFace();
 	*       getPersonGroup(); databaseGetUser('personId'); verify();
@@ -965,7 +960,7 @@ class FaceRecognation{
 			);
 		}
 		
-		$_SESSION[self::LOGIN_SESSION_NAME] = md5($this->user) . ";" . $this->user;
+		$_SESSION['webcam_login_session'] = md5($this->user) . ";" . $this->user;
 
 		return array(
 			'val' => true, 
@@ -981,7 +976,7 @@ class FaceRecognation{
 	* @see 		logout()
 	*/
 	public function logout(){
-		$_SESSION[self::LOGIN_SESSION_NAME] = NULL;
+		$_SESSION['webcam_login_session'] = NULL;
 		session_destroy();
 	}
 	

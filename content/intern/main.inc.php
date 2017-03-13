@@ -3,3 +3,5 @@
 	
 	<a href="javascript:void(logout());" class="btn btn-logout" id="lgoutBtn">Logout</a>
 </center>
+
+<div id="logoutResponse"></div>

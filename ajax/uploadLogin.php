@@ -11,14 +11,13 @@ if(!isset($_POST['username']) || !isset($_POST['base64data'])){
 	die();
 }
 	
-$user = $_POST['user'];
+$user = $_POST['username'];
 $img = $_POST['base64data'];	
 
 $login = new FaceRecognation($user);
 
 $res = $login->login($img);
-if($res != false){ 
-	echo json_encode($res);
-	die();
-}
+
+echo json_encode($res);
+die();
 ?>

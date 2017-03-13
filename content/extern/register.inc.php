@@ -25,7 +25,6 @@
 	<center>
 		<div id="livecam"></div>
 		<br>
-		<div id="registerResponse"></div>
 		<br>
 		<a href="?s=login" class="btn btn-backward">Zur&uuml;ck zum Login</a>
 		<a href="javascript:void(register());" class="btn btn-register" id="regBtn">Registrieren</a>
@@ -39,6 +38,7 @@
 	</div>
 	<br>
 </div>
+<div id="registerResponse"></div>
 <script language="javascript" type="text/javascript">
 	Webcam.attach('#livecam');
 </script>

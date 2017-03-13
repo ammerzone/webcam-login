@@ -16,19 +16,21 @@ function printResponse($res, $text){
 if(strlen($user) < 5)
 	printResponse(false, 'Username muss mind. 5 Zeichen lang sein.');
 
-if(file_exists('../media/user/login/' . $user . '.jpeg'))
-	printResponse(false, 'Username bereits vergeben.');
-
 $db = new DatabaseConnection();
 
-$row = $db->query(
-	'SELECT `name` FROM `user` WHERE `name` = :user', 
-	array('user' => $user)
-);
+$row = $db->query('SELECT `name` FROM `user`');
 
-if($row)
-	printResponse(false, 'Username bereits vergeben.');
+if(sizeof($row) > 0){
+	$res = false;
+	foreach($row as $key => $val){
+		if($val['name'] == $user){
+			$res = true;
+			break;
+		}
+	}
+	if($res === true)
+		printResponse(false, 'Username bereits vergeben.');
 
-
+}
 printResponse(true, 'Username frei.');
 ?>

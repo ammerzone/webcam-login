@@ -14,7 +14,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	private $login_dbname = '{database name}';
+	private $login_dbname = 'webcamlogin';
 	
 	/**
 	* Name of the host
@@ -30,7 +30,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	private $login_user = '{database user name}';
+	private $login_user = 'root';
 	
 	/**
 	* Passwort of the database user
@@ -38,7 +38,7 @@ class DatabaseConnection{
 	* @var 		string
 	* @access 	private
 	*/
-	private $login_password = '{database user password}';
+	private $login_password = '';
 	
 	/**
 	* @var 		object
@@ -50,7 +50,7 @@ class DatabaseConnection{
 	* @var 		object
 	* @access 	private
 	*/
-    private $sQuery;
+    private $query;
 	
 	/**
 	* @var 		array
@@ -77,7 +77,7 @@ class DatabaseConnection{
 	* @return 	void
 	*/
     public function __construct(){
-        $this->Connect();
+        $this->connect();
         $this->parameters = array();
     }
 	
@@ -97,7 +97,7 @@ class DatabaseConnection{
 		
 		/* try to execute query */
 		try{
-            $this->sQuery = $this->pdo->prepare($qry);
+            $this->query = $this->pdo->prepare($qry);
             $this->bindMore($params);
 			
             if(!empty($this->params))
@@ -109,9 +109,9 @@ class DatabaseConnection{
                         case is_null($value[1]) :  	$type = PDO::PARAM_NULL; break;
 						case is_string($value[1]) : $type = PDO::PARAM_STR;	 break;
                     }
-                    $this->sQuery->bindValue($value[0], $value[1], $type);
+                    $this->query->bindValue($value[0], $value[1], $type);
                 }
-            $this->sQuery->execute();
+            $this->query->execute();
         }catch(PDOException $e){
             echo "<script>alert('".$this->setException($e->getMessage(), $qry)."');</script>";
         }
@@ -127,8 +127,8 @@ class DatabaseConnection{
 	*/
     private function connect(){
         $dsn = "mysql:";
-		$dsn .= "dbname=" . $this->login_dbname;
-		$dsn .= "host=" . $this->login_host;
+		$dsn .= "dbname=" . $this->login_dbname . ";";
+		$dsn .= "host=" . $this->login_host . ";";
 		
 		/* Try to make connection to database */
         try{
@@ -206,8 +206,8 @@ class DatabaseConnection{
 	* @see 		setException()
 	*/
 	private function setException($msg, $sql = ""){
-        $exception = "Unhandled Exception. <br>";
-        $exception .= $msg . "<br>";
+        $exception = "Unhandled Exception. " . "\n";
+        $exception .= $msg . "\n";
 		$exception .= "Raw SQL : " . $sql;
 		
         return $exception;
@@ -245,9 +245,11 @@ class DatabaseConnection{
         $statement = strtoupper($rawStatement[0]);
         
         if($statement === 'SELECT' || $statement === 'SHOW')
-            return $this->sQuery->fetchAll($fetch);
+            return $this->query->fetchAll($fetch);
         elseif($statement === 'INSERT' || $statement === 'UPDATE' || $statement === 'DELETE')
-            return $this->sQuery->rowCount();
+            return $this->query->rowCount();
+		//elseif($statement === 'CREATE')
+		//	return $this->query->exec($qry);
         else
             return NULL;
     }
@@ -276,7 +278,7 @@ class DatabaseConnection{
 	*/
 	public function column($qry, $params = null){
         $this->init($qry, $params);
-        $Columns = $this->sQuery->fetchAll(PDO::FETCH_NUM);
+        $Columns = $this->query->fetchAll(PDO::FETCH_NUM);
         $column = null;
 		
         foreach($Columns as $cells){ $column[] = $cells[0]; }
@@ -296,8 +298,8 @@ class DatabaseConnection{
 	*/
     public function row($qry, $params = null, $fetch = PDO::FETCH_ASSOC){
         $this->init($qry, $params);
-        $result = $this->sQuery->fetch($fetch);
-        $this->sQuery->closeCursor();
+        $result = $this->query->fetch($fetch);
+        $this->query->closeCursor();
         return $result;
     }
 	
@@ -312,8 +314,8 @@ class DatabaseConnection{
 	*/
 	public function single($qry, $params = null){
         $this->init($qry, $params);
-        $result = $this->sQuery->fetchColumn();
-        $this->sQuery->closeCursor();
+        $result = $this->query->fetchColumn();
+        $this->query->closeCursor();
         return $result;
     }
 }

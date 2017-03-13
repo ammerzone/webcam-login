@@ -25,31 +25,19 @@ class FaceRecognation{
 	* Key for the Microsoft Face API
 	* @const 	API_PRIMARY_KEY
 	*/
-	const API_PRIMARY_KEY = '{Microsoft API Key}';
+	const API_PRIMARY_KEY = '5421fccda0d746179c22a71882c5e2de';
 	
 	/**
 	* Name of the Microsoft Face API person group
 	* @const 	API_PERSON_GROUP
 	*/
-	const API_PERSON_GROUP = '{Group name}';
+	const API_PERSON_GROUP = 'webcam-login';
 	
 	/**
 	* Directory Path where face-images will be saved
 	* @const 	IMG_PATH_PERSON
 	*/
 	const IMG_PATH_PERSON = 'media/user/';
-	
-	/**
-	* Directory Name where original face-images will be saved
-	* @const 	IMG_PATH_PERSON_ORIGINAL
-	*/
-	const IMG_PATH_PERSON_ORIGINAL = 'login';
-	
-	/**
-	* Directory Name where temporar login face-images will be saved
-	* @const 	IMG_PATH_PERSON_LOGIN
-	*/
-	const IMG_PATH_PERSON_LOGIN = 'tmp';
 	
 	/**
 	* Name of the login session cookie
@@ -104,17 +92,9 @@ class FaceRecognation{
 		if(!$this->checkTable())
 			$this->initTable();
 		
-		$file_headers = @get_headers(self::IMG_PATH_PERSON);
+		$file_headers = @get_headers(BASE_URL . self::IMG_PATH_PERSON);
 		if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found')
 			return $this->setResponseText('pathError', array('path' => self::IMG_PATH_PERSON));
-		
-		$file_headers = @get_headers(self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_ORIGINAL);
-		if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found')
-			return $this->setResponseText('pathError', array('path' => self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_ORIGINAL));
-		
-		$file_headers = @get_headers(self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_LOGIN);
-		if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found')
-			return $this->setResponseText('pathError', array('path' => self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_LOGIN));
 		
 		return true;
 	}
@@ -140,6 +120,7 @@ class FaceRecognation{
 	*/
 	private function checkTable(){
 		$row = $this->db->query("SELECT `personId`, `faceId`, `name`, `email` FROM `user`");
+		
 		if(!$row)
 			return false;
 		
@@ -155,7 +136,7 @@ class FaceRecognation{
 	*/
 	private function initTable(){
 		$row = $this->db->query('
-			CREATE TABLE `user` (
+			CREATE TABLE IF NOT EXISTS `user` (
 				`personId` varchar(36) NOT NULL,
 				`faceId` varchar(36) NOT NULL,
 				`name` varchar(64) NOT NULL,
@@ -235,14 +216,14 @@ class FaceRecognation{
 			case 'curlError' : 
 				$this->responseText = 'Fehler beim Aufau zur Microsoft face API: ' . ((array_key_exists('msg', $param)) ? $param['msg'] : NULL); 
 				break;
-			case 'methodImg' : 
-				$this->responseText = 'Das Bild muss "original" oder "login" zugewiesen werden.'; 
-				break;
 			case 'deleteError' : 
 				$this->responseText = 'Das Bild konnte nicht gelöscht werden.';
 				break;
+			case 'detectError' : 
+				$this->responseText = 'Fehler beim Hochladen der Gesichtserkennung: ' . ((array_key_exists('msg', $param)) ? $param['msg'] : NULL);
+				break;
 			case 'detectNoFace' : 
-				$this->responseText = 'Auf dem Bild konnte kein Gesicht identifiziert werden.' . $param; 
+				$this->responseText = 'Auf dem Bild konnte kein Gesicht identifiziert werden.'; 
 				break;
 			case 'detectMultipleFaces' : 
 				$this->responseText = 'Es wurde mehr als ein Gesicht identifiziert.'; 
@@ -400,16 +381,19 @@ class FaceRecognation{
 		if(strlen($this->user) < 5)
 			return $this->setResponseText('userLength');
 		
-		if(file_exists('../media/user/login/' . $this->user . '.jpeg'))
-			return $this->setResponseText('userExists');
+		$row = $this->db->query('SELECT `name` FROM `user`');
 		
-		$row = $this->db->query(
-			'SELECT `name` FROM `user` WHERE `name` = :user', 
-			array('user' => $this->user)
-		);
-		
-		if($row)
-			return $this->setResponseText('userExists');
+		if(sizeof($row) > 0){
+			$res = false;
+			foreach($row as $key => $val){
+				if($val['name'] == $this->user){
+					$res = true;
+					break;
+				}
+			}
+			if($res === true)
+				$this->setResponseText('userExists');
+		}
 		
 		return true;
 	}
@@ -428,13 +412,19 @@ class FaceRecognation{
 		if(!filter_var($this->email, FILTER_VALIDATE_EMAIL))
 			return $this->setResponseText('mailInvalid');
 		
-		$row = $this->db->query(
-			'SELECT `email` FROM `user` WHERE `email` = :email', 
-			array('email' => $this->email)
-		);
+		$row = $this->db->query('SELECT `email` FROM `user`');
 		
-		if($row)
-			return $this->setResponseText('mailExists');
+		if(sizeof($row) > 0){
+			$res = false;
+			foreach($row as $key => $val){
+				if($val['email'] == $this->email){
+					$res = true;
+					break;
+				}
+			}
+			if($res === true)
+				return $this->setResponseText('mailExists');
+		}
 		
 		return true;
 	}
@@ -443,24 +433,17 @@ class FaceRecognation{
 	* Upload $img to given directory based on parameter
 	* 
 	* @access 	private
-	* @param 	string 	$method
 	* @return 	boolean
 	* @see		uploadImage()
 	*/
-	private function uploadImage($method){
-		if(strtoupper($method) != 'ORIGINAL' && strtoupper($method) != 'LOGIN')
-			return $this->setResponseText('methodImg');
-		
+	private function uploadImage(){
 		if($this->img === NULL)
 			return $this->setResponseText('uploadNoimage');
 		
 		$data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $this->img));
 		
-		if(strtoupper($method) == 'ORIGINAL')
-			$destURL = self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_ORIGINAL . '/' . $this->user . '.jpeg';
-		else
-			$destURL = self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_LOGIN . '/' . $this->user . '.jpeg';
-		
+		$destURL = self::IMG_PATH_PERSON . '/' . $this->user . '.jpeg';
+			
 		$link = str_replace(BASE_URL, '', 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 		$depth = sizeof(explode("/", $link)) - 1;
 		
@@ -481,18 +464,11 @@ class FaceRecognation{
 	* Delete image related to user from given directory based on parameter
 	* 
 	* @access 	private
-	* @param 	string 	$method
 	* @return 	boolean
 	* @see		deleteImage()
 	*/
-	private function deleteImage($method){
-		if(strtoupper($method) != 'ORIGINAL' && strtoupper($method) != 'LOGIN')
-			return $this->setResponseText('methodImg');
-		
-		if(strtoupper($method) == 'ORIGINAL')
-			$path = self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_ORIGINAL . '/' . $this->user . '.jpeg';
-		else
-			$path = self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_LOGIN . '/' . $this->user . '.jpeg';
+	private function deleteImage(){
+		$path = self::IMG_PATH_PERSON . '/' . $this->user . '.jpeg';
 		
 		$link = str_replace(BASE_URL, '', 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 		$depth = sizeof(explode("/", $link)) - 1;
@@ -519,38 +495,56 @@ class FaceRecognation{
 	* Microsoft Face API to detect faces and get a faceId
 	* 
 	* @access 	private
-	* @param 	string 	$method
 	* @return 	mixed
 	* @see		detectFace()
 	*/
-	private function detectFace($method){
-		if(strtoupper($method) != 'ORIGINAL' && strtoupper($method) != 'LOGIN'){
-			//$this->deleteImage('LOGIN'); // nur login weil register kann überschrieben werden, wenn bei einem eigentlichen Login verschwindet wär blöd
-			return $this->setResponseText('methodImg');
-		}
-		
-		if(strtoupper($method) == 'ORIGINAL')
-			$img = BASE_URL . self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_ORIGINAL . '/' . $this->user . '.jpeg';
-		else
-			$img = BASE_URL . self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_LOGIN . '/' . $this->user . '.jpeg';
+	private function detectFace(){
+		$img = BASE_URL . self::IMG_PATH_PERSON . '/' . $this->user . '.jpeg';
 		
 		$res = $this->curl('POST', 'detect?returnFaceId=true', array('url' => $img));
 		
-		if($res === false)
+		if($res === false){
+			$res2 = $this->deleteImage();
+			
+			if($res2 === false)
+				return false;
+			
 			return false;
+		}
+		
+		if(array_key_exists('error', $res)){
+			//$res2 = $this->deleteImage();
+			
+			//if($res2 === false)
+			//	return false;
+			
+			return $this->setResponseText('detectError', array('msg' => $res['error']['message']));
+		}
 		
 		if(!array_key_exists(0, $res)){
-			//$this->deleteImage($method);
-			return $this->setResponseText('detectNoFace');
+			//$res2 = $this->deleteImage();
+			
+			//if($res2 === false)
+			//	return false;
+			
+			return $this->setResponseText('detectNoFace',$res);
 		}
 		
 		if(!array_key_exists('faceId', $res[0])){
-			//$this->deleteImage($method);
-			return $this->setResponseText('detectNoFace');
+			$res = $this->deleteImage();
+			
+			if($res === false)
+				return false;
+			
+			return $this->setResponseText('detectNoFace',$res);
 		}
 		
 		if(sizeof($response) > 1){
-			//$this->deleteImage($method);
+			$res2 = $this->deleteImage();
+			
+			if($res2 === false)
+				return false;
+			
 			return $this->setResponseText('detectMultipleFaces');
 		}
 		
@@ -708,7 +702,7 @@ class FaceRecognation{
 	private function addPersonFace($personId){
 		$url = 'persongroups/' . self::API_PERSON_GROUP . '/persons/' . $personId . '/persistedFaces';
 		$data = array(
-			'url' => BASE_URL . self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_ORIGINAL . '/' . $this->user . '.jpeg'
+			'url' => BASE_URL . self::IMG_PATH_PERSON . '/' . $this->user . '.jpeg'
 		);
 		$res = $this->curl('POST', $url, $data);
 		
@@ -719,7 +713,7 @@ class FaceRecognation{
 			return $this->setResponseText('personFaceEmpty');
 		
 		if(array_key_exists('error', $res))
-			return $this->setResponseText('personFaceError', array('msg' => $res['error']['message'] . BASE_URL . self::IMG_PATH_PERSON . self::IMG_PATH_PERSON_ORIGINAL . '/' . $this->user . '.jpeg'));
+			return $this->setResponseText('personFaceError', array('msg' => $res['error']['message'] . BASE_URL . self::IMG_PATH_PERSON . '/' . $this->user . '.jpeg'));
 		
 		$persistedFaceId = $res['persistedFaceId'];
 		
@@ -798,15 +792,9 @@ class FaceRecognation{
 		if($this->email === NULL || $email === NULL)
 			return $this->setResponseText('mailUnset');
 		
-		$row = $this->db->query(
-			'INSERT INTO `user` (`personId`, `faceId`, `name`, `email`) VALUES (:personId, :faceId, :name, :email)', 
-			array(
-				'personId' => $personId, 
-				'faceId' => $faceId, 
-				'name' => $this->user,
-				'email' => (($this->email === NULL) ? $email : $this->email)
-			)
-		);
+		$email = (isset($email) ? $email : $this->email);
+		
+		$row = $this->db->query("INSERT INTO `user` (`personId`, `faceId`, `name`, `email`) VALUES ('" . $personId . "', '" . $faceId . "', '" . $this->user . "', '" . $email . "')");
 		
 		if(!$row)
 			return $this->setResponseText('dbAddError');
@@ -824,10 +812,7 @@ class FaceRecognation{
 	* @see		databaseUpdateUser()
 	*/
 	private function databaseUpdateUser($attr, $value){
-		$row = $this->db->query(
-			'UPDATE `user` SET `' . $attr . '` = :val WHERE `name` = :user', 
-			array('val' => $value, 'user' => $this->user)
-		);
+		$row = $this->db->query("UPDATE `user` SET `' . $attr . '` = '" . $value . "' WHERE `name` = '" . $this->user . "'");
 		
 		if(!$row)
 			return $this->setResponseText('dbUpdateError');
@@ -843,12 +828,9 @@ class FaceRecognation{
 	* @see		databaseGetUser()
 	*/
 	private function databaseGetUser($data){
-		$row = $this->db->query(
-			'SELECT `' . $data . '` FROM `user` WHERE `name` = :user', 
-			array('user' => $this->user)
-		);
+		$row = $this->db->query("SELECT `" . $data . "` FROM `user` WHERE `name` = '" . $this->user . "'");
 		
-		if(strlen($row) === 0)
+		if(sizeof($row) === 0)
 			return $this->setResponseText('dbGetError');
 		
 		return $row[0][$data];
@@ -877,22 +859,13 @@ class FaceRecognation{
 		if(strlen($this->user) == 0 || strlen($img) == 0){ 
 			return array(
 				'val' => false, 
-				'responseText' => 'Es wurden nicht alle Felder ausgefüllt.'
+				'responseText' => 'Es wurden nicht alle Felder ausgefüllt.' . $this->user
 			);
 		}
 
 		$this->setBase64Img($img);
 
-		$res = $this->checkUser();
-		
-		if($res != false){ 
-			return array(
-				'val' => $res, 
-				'responseText' => $this->responseText
-			);
-		}
-		
-		$res = $this->uploadImage('LOGIN');
+		$res = $this->databaseGetUser('name');
 		
 		if($res === false){ 
 			return array(
@@ -901,7 +874,16 @@ class FaceRecognation{
 			);
 		}
 		
-		$res = $this->detectFace('LOGIN');
+		$res = $this->uploadImage();
+		
+		if($res === false){ 
+			return array(
+				'val' => $res, 
+				'responseText' => $this->responseText
+			);
+		}
+		
+		$res = $this->detectFace();
 		
 		if($res === false){ 
 			return array(
@@ -911,13 +893,14 @@ class FaceRecognation{
 		}
 		
 		$faceId = $res;
-
+		
 		$res = $this->getPersonGroup();
+		
 		if($res === false){
 			$res = $this->createPersonGroup();
 			
 			if($res === false){
-				$res2 = $this->deleteImage('ORIGINAL');
+				$res2 = $this->deleteImage();
 				
 				if($res2 === false){ 
 					return array(
@@ -936,7 +919,7 @@ class FaceRecognation{
 		$res = $this->databaseGetUser('personId');
 		
 		if($res === false){
-			$res2 = $this->deleteImage('LOGIN');
+			$res2 = $this->deleteImage();
 			
 			if($res2 === false){ 
 				return array(
@@ -952,11 +935,11 @@ class FaceRecognation{
 		}
 		
 		$personId = $res;
-
+		
 		$res = $this->verify($faceId, $personId);
 		
 		if($res === false){
-			$res2 = $this->deleteImage('LOGIN');
+			$res2 = $this->deleteImage();
 			
 			if($res2 === false){ 
 				return array(
@@ -973,7 +956,7 @@ class FaceRecognation{
 		
 		$confidence = $res;
 
-		$res = $this->deleteImage('LOGIN');
+		$res = $this->deleteImage();
 		
 		if($res === false){ 
 			return array(
@@ -1054,7 +1037,7 @@ class FaceRecognation{
 			);
 		}
 
-		$res = $this->uploadImage('ORIGINAL');
+		$res = $this->uploadImage();
 
 		if($res === false){
 			return array(
@@ -1063,7 +1046,7 @@ class FaceRecognation{
 			);
 		}
 
-		$res = $this->detectFace('ORIGINAL');
+		$res = $this->detectFace();
 
 		if($res === false){
 			return array(
@@ -1080,7 +1063,7 @@ class FaceRecognation{
 			$res = $this->createPersonGroup();
 			
 			if($res === false){
-				$res2 = $this->deleteImage('ORIGINAL');
+				$res2 = $this->deleteImage();
 				
 				if($res2 === false){
 					return array(
@@ -1099,7 +1082,7 @@ class FaceRecognation{
 		$res = $this->createPerson();
 
 		if($res === false){
-			$res2 = $this->deleteImage('ORIGINAL');
+			$res2 = $this->deleteImage();
 			
 			if($res2 === false){
 				return array(
@@ -1119,7 +1102,7 @@ class FaceRecognation{
 		$res = $this->addPersonFace($personId);
 
 		if($res === false){
-			$res2 = $this->deleteImage('ORIGINAL');
+			$res2 = $this->deleteImage();
 			
 			if($res2 === false){
 				return array(
@@ -1137,7 +1120,7 @@ class FaceRecognation{
 		$res = $this->databaseAddUser($faceId, $personId, $this->email);
 
 		if($res === false){
-			$res2 = $this->deleteImage('ORIGINAL');
+			$res2 = $this->deleteImage();
 			
 			if($res2 === false){
 				return array(
@@ -1152,6 +1135,15 @@ class FaceRecognation{
 			);
 		}
 
+		$res = $this->deleteImage();
+		
+		if($res === false){ 
+			return array(
+				'val' => $res, 
+				'responseText' => $this->responseText
+			);
+		}
+		
 		return array(
 			'val' => true, 
 			'responseText' => 'User konnte erfolgreich angelegt werden.'
@@ -1214,7 +1206,7 @@ class FaceRecognation{
 		
 		$this->setBase64Img($newImg);
 		
-		$res = $this->uploadImage('ORIGINAL');
+		$res = $this->uploadImage();
 
 		if($res === false){
 			return array(
@@ -1223,7 +1215,7 @@ class FaceRecognation{
 			);
 		}
 
-		$res = $this->detectFace('ORIGINAL');
+		$res = $this->detectFace();
 
 		if($res === false){
 			return array(
@@ -1240,7 +1232,7 @@ class FaceRecognation{
 			$res = $this->createPersonGroup();
 			
 			if($res === false){
-				$res2 = $this->deleteImage('ORIGINAL');
+				$res2 = $this->deleteImage();
 				
 				if($res2 === false){
 					return array(

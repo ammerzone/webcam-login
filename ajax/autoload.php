@@ -5,5 +5,5 @@ $url = explode('ajax', 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI
 define('BASE_URL', $url);
 
 require_once('../oop/DatabaseConnection.class.php');
-require_once('../oop/FaceRecognation.class.php');
+require_once('../oop/FaceRecognition.class.php');
 ?>

@@ -1,7 +1,8 @@
-<center>
-	<h1>Interner Bereich</h1>
-	
-	<a href="javascript:void(logout());" class="btn btn-logout" id="lgoutBtn">Logout</a>
-</center>
+<?php require_once('content/intern/header.inc.php'); ?>
 
-<div id="logoutResponse"></div>
+<div class="container">
+	<h1>Home</h1>
+	<p>
+		Welcome to the internal area of the webcam login.<br>
+	</p>
+</div>

@@ -1,85 +1,50 @@
-body{
-	font-family: Arial, sans-serif;
-	font-size: 14px;
-	background-color: #FEFEFE;
-}
-#loginField, 
-#registerField{
-	width: 50%;
-	min-height: 50vh;
-	margin-left: 25%;
-	border: 1px solid;
-	border-radius: 4px;
-	background-color: #F0F0F0;
-}
-#loginField>div, 
-#registerField>div{
-	margin-left: 15px;
-}
-#lgnUsername{
-	width: 50%;
-	float: left;
-	margin-left: 15px;
-}
-.form-control{
-    display: block;
-    padding: 8px 12px;
+*{
+	color: #222;
     font-size: 16px;
-    line-height: 1.25;
-    color: #464A4C;
-    background-color: #FFF;
-    background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, .15);
-    border-radius: 4px;
-    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    font-family: Arial, sans-serif;
+    font-weight: 500;
 }
-#lgnBtn{
-	float: right;
-	margin-right: 15px;
+
+body{
+	font-size: 16px;
 }
+
+.container, .container-fluid{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
 .loader{
 	width: 35px;
 	height: 35px;
 }
-.btn{
-	display: inline-block;
-	padding: 8px 12px;
-	margin-bottom: 0;
-	font-size: 16px;
-	font-weight: 400;
-	line-height: 1.25;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: middle;
-	cursor: pointer;
-	user-select: none;
-	background-image: none;
-	border: 1px solid transparent;
-	border-radius: 4px;
-	text-decoration: none;
-}
-.btn-login{
+
+.btn-login, .btn-save{
 	color: #222;
 	background-color: #82DD27;
 	border-color: #F0F0F0;
 	font-weight: 600;
     transition: background-color ease-in-out .5s,color ease-in-out .5s;
 }
-.btn-login:hover{
+
+.btn-login:hover, .btn-save:hover{
 	color: #F0F0F0;
 	background-color: #589718;
 }
-.btn-backward{
+
+.btn-backward, .btn-logout, .btn-delete{
 	color: #222;
 	background-color: #F32D2A;
 	border-color: #F0F0F0;
 	font-weight: 600;
     transition: background-color ease-in-out .5s,color ease-in-out .5s;
 }
-.btn-backward:hover{
+
+.btn-backward:hover, .btn-logout:hover, .btn-delete:hover{
 	color: #F0F0F0;
 	background-color: #CE0F0B;
 }
+
 .btn-register{
 	color: #222;
 	background-color: #4A9DC1;
@@ -87,21 +52,13 @@ body{
 	font-weight: 600;
     transition: background-color ease-in-out .5s,color ease-in-out .5s;
 }
+
 .btn-register:hover{
 	color: #F0F0F0;
 	background-color: #327795;
 }
-#registerField table{
-	margin-left: 15px;
-}
-#register{
-	margin-left: 15px;
-	margin-bottom: 8px;
-}
 
-#loginResponse, 
-#registerResponse, 
-#logoutResponse{
+#ajaxResponse{
 	position: fixed;
     top: 25%;
 	left: 25%;
@@ -120,39 +77,195 @@ body{
     display: none;
 }
 
-@media (min-width: 1280px){
-	#livecam{
-		width: 640px !important;
-		height: 480px !important;
-		margin-top: 8px;
+#loginField, #registerField{
+	margin-top: 15px;
+}
+
+@media (min-width: 0px){
+	h1{
+		font-size: 7.5em !important;
+	}
+	
+	*, a, p, u, i, b, li, strong, br, hr, label, div, body{
+		font-size: 3.75em !important;
+	}
+	
+	small, small a, small i, small b, small strong, small p{
+		font-size: 3em !important;
+	}
+	
+	input, .btn{
+		font-size: 3.75em !important;
+		height: 5.25em !important;
 	}
 }
 
-@media (max-width: 1279px){
-	#livecam{
-		width: 320px !important;
-		height: 240px !important;
-		margin-top: 8px;
+@media (min-width: 375px){
+	h1{
+		font-size: 6.4em !important;
+	}
+	
+	*, a, p, u, i, b, li, strong, br, hr, label, div, body{
+		font-size: 3.2em !important;
+	}
+	
+	small, small a, small i, small b, small strong, small p{
+		font-size: 2.56em !important;
+	}
+	
+	input, .btn{
+		font-size: 3.2em !important;
+		height: 4.48em !important;
 	}
 }
-@media (max-width: 768px){
-	#loginField, 
-	#registerField{
-		width: 100%;
-		min-height: 100vw;
-		margin-left: 0%;
-		margin-top: 8px;
+
+@media (min-width: 425px){
+	h1{
+		font-size: 5.64705882352em !important;
 	}
-	#livecam{
-		width: 640px !important;
-		height: 480px !important;
-		margin-top: 8px;
+	
+	*, a, p, u, i, b, li, strong, br, hr, label, div, body{
+		font-size: 2.82352941176em !important;
+	}
+	
+	small, small a, small i, small b, small strong, small p{
+		font-size: 2.25882352941em !important;
+	}
+	
+	input, .btn{
+		font-size: 2.82352941176em !important;
+		height: 3.95294117646em !important;
 	}
 }
-@media (max-width: 639px){
+
+@media (min-width: 576px){
+	h1{
+		font-size: 4.16666666667em !important;
+	}
+	
+	*, a, p, u, i, b, li, strong, br, hr, label, div, body{
+		font-size: 2.08333333333em !important;
+	}
+	
+	small, small a, small i, small b, small strong, small p{
+		font-size: 1.66666666666em !important;
+	}
+	
+	input, .btn{
+		font-size: 2.08333333333em !important;
+		height: 2.91666666666em !important;
+	}
+}
+
+@media (min-width: 768px){
+	h1{
+		font-size: 3.125em !important;
+	}
+	
+	*, a, p, u, i, b, li, strong, br, hr, label, div, body{
+		font-size: 1.20967741935em !important;
+	}
+	
+	small, small a, small i, small b, small strong, small p{
+		font-size: 1.05em !important;
+	}
+	
+	input, .btn{
+		font-size: 1.20967741935em !important;
+		height: 1.69354838709em !important;
+	}
+}
+
+@media (min-width: 992px){
+	h1{
+		font-size: 2.41935483870em !important;
+	}
+	
+	*, a, p, u, i, b, li, strong, br, hr, label, div, body{
+		font-size: 1.20967741935em !important;
+	}
+	
+	small, small a, small i, small b, small strong, small p{
+		font-size: .96774193548em !important;
+	}
+	
+	input, .btn{
+		font-size: 1.20967741935em !important;
+		height: 1.69354838709em !important;
+	}
+}
+
+@media (min-width: 1200px){
+	h1{
+		font-size: 2em !important;
+	}
+	
+	*, a, p, u, i, b, li, strong, br, hr, label, div, body{
+		font-size: 1em !important;
+	}
+	
+	small, small a, small i, small b, small strong, small p{
+		font-size: .8em !important;
+	}
+	
+	input, .btn{
+		font-size: 1em !important;
+		height: 2.2em !important;
+	}
+}
+
+@media (min-width: 0px) and (orientation: landscape){
 	#livecam{
-		width: 320px !important;
-		height: 240px !important;
-		margin-top: 8px;
+		width: 100vw;
+		height: 75vw;
+	}
+}
+
+@media (min-width: 768px) and (orientation: landscape){
+	#livecam{
+		width: 750px;
+		height: 562.5px;
+	}
+}
+
+@media (min-width: 992px) and (orientation: landscape){
+	#livecam{
+		width: 496px;
+		height: 351.75px;
+	}
+}
+
+@media (min-width: 1200px) and (orientation: landscape){
+	#livecam{
+		width: 585px;
+		height: 438.75px;
+	}
+}
+
+@media (min-width: 0px) and (orientation: portrait){
+	#livecam{
+		width: 100vw;
+		height: 133.33333333333333333333333333vw;
+	}
+}
+
+@media (min-width: 768px) and (orientation: portrait){
+	#livecam{
+		width: 750px;
+		height: 1000px;
+	}
+}
+
+@media (min-width: 992px) and (orientation: portrait){
+	#livecam{
+		width: 496px;
+		height: 661.333333333333333333333px;
+	}
+}
+
+@media (min-width: 1200px) and (orientation: portrait){
+	#livecam{
+		width: 585px;
+		height: 780px;
 	}
 }

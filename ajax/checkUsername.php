@@ -1,8 +1,6 @@
 <?php
 require_once('autoload.php');
 
-$user = $_POST['username'];
-
 function printResponse($res, $text){
 	echo json_encode(
 		array(
@@ -13,8 +11,13 @@ function printResponse($res, $text){
 	die();
 }
 
+if(!isset($_POST['username']))
+	printResponse(false, '');
+
+$user = $_POST['username'];
+
 if(strlen($user) < 5)
-	printResponse(false, 'Username muss mind. 5 Zeichen lang sein.');
+	printResponse(false, 'User name must have a minimum size of 5.');
 
 $db = new DatabaseConnection();
 
@@ -29,8 +32,8 @@ if(sizeof($row) > 0){
 		}
 	}
 	if($res === true)
-		printResponse(false, 'Username bereits vergeben.');
+		printResponse(false, 'User name already exists.');
 
 }
-printResponse(true, 'Username frei.');
+printResponse(true, 'User name valid.');
 ?>

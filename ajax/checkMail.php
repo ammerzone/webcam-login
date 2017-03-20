@@ -1,8 +1,6 @@
 <?php
 require_once('autoload.php');
 
-$email = $_POST['email'];
-
 function printResponse($res, $text){
 	echo json_encode(
 		array(
@@ -12,6 +10,11 @@ function printResponse($res, $text){
 	);
 	die();
 }
+
+if(!isset($_POST['email']))
+	printResponse(false, '');
+
+$email = $_POST['email'];
 
 if(filter_var($email, FILTER_VALIDATE_EMAIL)){
 	$db = new DatabaseConnection();
@@ -26,12 +29,12 @@ if(filter_var($email, FILTER_VALIDATE_EMAIL)){
 			}
 		}
 		if($res === true)
-			printResponse(false, 'E-Mail Adresse bereits vergeben.');
+			printResponse(false, 'E-Mail adress already exists.');
 	}
 	
-	printResponse(true, 'E-Mail Adresse erfüllt Kriterien.');
+	printResponse(true, 'E-Mail adress is valid.');
 }else{
-	printResponse(false, 'E-Mail Adresse ist ungültig.');
+	printResponse(false, 'E-Mail adresse is invalid.');
 }
 
 echo json_encode($res);

@@ -4,7 +4,9 @@
 * 
 * @author 			Jules Rau <admin@jules-rau.de>
 * @copyright 		Jules Rau
-* @version 	1.0	07.03.2017
+* @license 			MIT license
+* @origin 			https://github.com/ammerzone/webcam-login
+* @version 	1.0		20.03.2017
 */
 
 class DatabaseConnection{

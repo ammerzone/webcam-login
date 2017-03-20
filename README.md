@@ -16,4 +16,4 @@ This Project works with the [Microsoft Face API](https://www.microsoft.com/cogni
 Check my [live version](http://jules-rau.de/projects/webcam-login) to get a feeling for it.
 
 # Licensing
-Webcam login is licensed under the MIT license
+Webcam login is licensed under the [MIT license](https://github.com/ammerzone/webcam-login/blob/master/LICENSE)

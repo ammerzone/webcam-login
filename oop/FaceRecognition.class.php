@@ -11,7 +11,7 @@
 * @param 	string 	$user
 * @return 	boolean
 * @author 			Jules Rau <admin@jules-rau.de>
-* @copyright 		Jules Rau
+* @copyright 			Jules Rau
 * @license 			MIT license
 * @origin 			https://github.com/ammerzone/webcam-login
 * @version 	1.0		09.03.2017
@@ -28,19 +28,19 @@ class FaceRecognition{
 	* Key for the Microsoft Face API
 	* @const 	API_PRIMARY_KEY
 	*/
-	const API_PRIMARY_KEY = '5421fccda0d746179c22a71882c5e2de';
+	const API_PRIMARY_KEY = '{Your Microsoft API key}';
 	
 	/**
 	* Name of the Microsoft Face API person group
 	* @const 	API_PERSON_GROUP
 	*/
-	const API_PERSON_GROUP = 'webcam-login';
+	const API_PERSON_GROUP = '{Your group-name}';
 	
 	/**
 	* Directory Path where face-images will be saved
 	* @const 	IMG_PATH_PERSON
 	*/
-	const IMG_PATH_PERSON = 'media/user/';
+	const IMG_PATH_PERSON = '{relative path for temp uploads}';
 	
 	/**
 	* @var 		object

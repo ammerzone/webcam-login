@@ -3,6 +3,12 @@ session_start();
 
 $url = explode('?', str_replace('index.php', '', 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']))[0];
 define('BASE_URL', $url);
+
+/* Force the request url always to https, needed for webcam stream */
+if(empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] !== "on"){
+	header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+	exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">

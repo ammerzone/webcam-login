@@ -12,8 +12,5 @@ This Project works with the [Microsoft Face API](https://www.microsoft.com/cogni
 * Enter your Microsoft Face API key and settings in 'oop/FaceRecognition.class.php'
 * Optional: Enable SSL for more security
 
-# Usage examples
-Check my [live version](http://jules-rau.de/projekte/webcam-login) to get a feeling for it.
-
 # Licensing
 Webcam login is licensed under the [MIT license](https://github.com/ammerzone/webcam-login/blob/master/LICENSE)
